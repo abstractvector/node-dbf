@@ -1,0 +1,21 @@
+{
+  "name": "node-dbf",
+  "version": "0.1.0",
+  "description": "An efficient dBase DBF file parser written in pure JavaScript",
+  "main": "./lib/parser.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/abstractvector/node-dbf.git"
+  },
+  "keywords": [
+    "dBase",
+    "dbf"
+  ],
+  "author": "Matt Knight <matt@abstractvector.co.uk>",
+  "devDependencies": {
+    "coffee-script": ">=1.3.3"
+  },
+  "scripts": {
+    "prepublish": "cake build"
+  }
+}
