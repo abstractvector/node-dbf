@@ -41,9 +41,9 @@ class Parser extends EventEmitter
         return record
 
     parseField: (field, buffer) =>
-        value = (buffer.toString 'utf-8').replace /^\x20+|\x20+$/g, ''
+        value = buffer.toString().replace /^\x20+|\x20+$/g, ''
 
-        if field.type is 'N' then value = parseInt value, 10
+        if field.type is 'N' then value = parseFloat value
 
         return value
 
