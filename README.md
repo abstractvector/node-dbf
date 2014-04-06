@@ -65,6 +65,10 @@ In addition to the fields, the object contains two special keys:
 * @sequenceNumber `Number` indicates the order in which it was extracted
 * @deleted `Boolean` whether this record has been deleted or not
 
+Each field is parsed using the `utf-8` encoding. If you want a different encoding, you should initialize the Parser with that encoding:
+
+    new Parser('/path/to/my/dbase/file.dbf', 'win1252');
+
 This object may look like:
 
     {
