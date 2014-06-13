@@ -13,7 +13,9 @@
   ],
   "author": "Matt Knight <matt@abstractvector.co.uk>",
   "devDependencies": {
-    "coffee-script": ">=1.3.3",
+    "coffee-script": ">=1.3.3"
+  },
+  "dependencies": {
     "iconv-lite": ">=0.2.11"
   },
   "scripts": {
