@@ -19,10 +19,13 @@ class Parser extends EventEmitter
             loc = @header.start
             bufLoc = @header.start
             overflow = null
+            @paused = false
             
             stream = fs.createReadStream @filename
             
-            readBuf = =>
+            @readBuf = =>
+            
+                if @paused then return
                 
                 while buffer = stream.read()
                     
@@ -40,13 +43,23 @@ class Parser extends EventEmitter
                     
                     return @
                     
-            stream.on 'readable',readBuf
+            stream.on 'readable',@readBuf
             
             stream.on 'end', () =>
             
                 @emit 'end'
 
         return @
+        
+    pause: =>
+        
+        @paused = true
+        
+    resume: =>
+    
+        @paused = false
+        
+        do @readBuf
 
     parseRecord: (sequenceNumber, buffer) =>
         record = {
