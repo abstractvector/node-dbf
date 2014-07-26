@@ -25,7 +25,11 @@ class Parser extends EventEmitter
             
             @readBuf = =>
             
-                if @paused then return
+                if @paused
+                
+                    @emit 'paused'
+                    
+                    return
                 
                 while buffer = stream.read()
                     
@@ -58,6 +62,8 @@ class Parser extends EventEmitter
     resume: =>
     
         @paused = false
+        
+        @emit 'resuming'
         
         do @readBuf
 
