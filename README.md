@@ -1,4 +1,4 @@
-node-dbf
+dbf-parser
 ========
 
 This is an event-based dBase file parser for very efficiently reading data from *.dbf files.
