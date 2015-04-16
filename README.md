@@ -3,13 +3,16 @@ node-dbf
 
 This is an event-based dBase file parser for very efficiently reading data from *.dbf files.
 
+Based on https://github.com/abstractvector/node-dbf but works without coffee and provide float type of numbers.
+F.e. correct work with VMap0 geonames base (http://gis-lab.info/data/vmap0-settl-rus/population-gislab.7z)
+
 To get started, simply install the module using npm:
 
-    npm install node-dbf
+    npm install dbf-parser
 
 and then `require` it:
 
-    var Parser = require('node-dbf');
+    var Parser = require('dbf-parser');
 
 #Classes
 
