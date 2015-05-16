@@ -1,19 +1,18 @@
+
 {
-  "name": "node-dbf-carevoyance",
-  "version": "0.1.1",
+  "name": "node-dbf",
+  "version": "0.1.2",
   "description": "An efficient dBase DBF file parser written in pure JavaScript",
   "main": "./lib/parser.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/Carevoyance/node-dbf.git"
+    "url": "git://github.com/abstractvector/node-dbf.git"
   },
   "keywords": [
     "dBase",
     "dbf"
   ],
   "author": "Matt Knight <matt@abstractvector.co.uk>",
-  "contributors": ["Matt Knight <matt@abstractvector.co.uk>",
-                   "Daniel Imfeld <daniel@carevoyance.com>"],
   "devDependencies": {
     "coffee-script": ">=1.3.3"
   },
