@@ -16,8 +16,7 @@ class Parser extends EventEmitter
             stream = fs.createReadStream @filename
 
         stream.once 'end', () =>
-                console.log "DONE"
-                @emit 'end'
+            @emit 'end'
 
         @header = new Header stream
         @header.parse (err) =>
@@ -31,7 +30,6 @@ class Parser extends EventEmitter
                     @emit 'paused'
                     
                     return
-                console.log "ReadBuf"
                 while !@done and (buffer = stream.read @header.recordLength)
                     if buffer[0] == 0x1A
                         @done = true
@@ -39,7 +37,6 @@ class Parser extends EventEmitter
                         @emit 'record', @parseRecord ++sequenceNumber, buffer
 
             stream.on 'readable',@readBuf
-            console.log "HERE"
 
             do @readBuf
 

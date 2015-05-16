@@ -41,7 +41,6 @@ class Header
             
             if @state is _STATE_FINISHING
                 delta = @start - @index
-                console.log "Delta", delta, "Start", @start
                 if delta > 0
                     # Read up to start
                     buffer = @stream.read delta
@@ -50,7 +49,6 @@ class Header
                 else if delta < 0
                     # We read too much, so put some data back on the stream.
                     buffer = buffer.slice delta
-                    console.log "Unshift", buffer
                     @stream.unshift buffer
                 @state = _STATE_DONE
 
@@ -61,7 +59,6 @@ class Header
         @stream.on 'readable', doParse
 
     parseDate: (buffer) =>
-        console.log @convertBinaryToInteger buffer.slice 0, 1
         year = 1900 + @convertBinaryToInteger buffer.slice 0, 1
         month = (@convertBinaryToInteger buffer.slice 1, 2) - 1
         day = @convertBinaryToInteger buffer.slice 2, 3
