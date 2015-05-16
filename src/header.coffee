@@ -2,22 +2,63 @@ fs = require 'fs'
 
 class Header
 
-    constructor: (@filename) ->
+    constructor: (@stream) ->
         return @
 
     parse: (callback) ->
-        fs.readFile @filename, (err, buffer) =>
-            throw err if err
+        _STATE_HEADER = 1
+        _STATE_FIELDS = 2
+        _STATE_FINISHING = 3
+        _STATE_DONE = 4
+        @state = _STATE_HEADER
+        @index = 0
+        @fields = []
 
-            @type = (buffer.slice 0, 1).toString 'utf-8'
-            @dateUpdated = @parseDate (buffer.slice 1, 4)
-            @numberOfRecords = @convertBinaryToInteger (buffer.slice 4, 8)
-            @start = @convertBinaryToInteger (buffer.slice 8, 10)
-            @recordLength = @convertBinaryToInteger (buffer.slice 10, 12)
+        doParse = () =>
+            ranout = false
+            if @state is _STATE_HEADER
+                buffer = @stream.read 32
+                if buffer is null
+                    return
+                
+                @index = 32
+                @type = (buffer.slice 0, 1).toString 'utf-8'
+                @dateUpdated = @parseDate (buffer.slice 1, 4)
+                @numberOfRecords = @convertBinaryToInteger (buffer.slice 4, 8)
+                @start = @convertBinaryToInteger (buffer.slice 8, 10)
+                @recordLength = @convertBinaryToInteger (buffer.slice 10, 12)
 
-            @fields = (buffer.slice i, i+32 for i in [32 .. @start - 32] by 32).map @parseFieldSubRecord
+                @state = _STATE_FIELDS
 
-            callback @
+            if @state is _STATE_FIELDS
+                fieldHeaderSize = 32
+                while buffer = @stream.read fieldHeaderSize
+                    @index += fieldHeaderSize
+                    if buffer[0] == 0x0D
+                        @state = _STATE_FINISHING
+                        break
+                    @fields.push @parseFieldSubRecord buffer
+            
+            if @state is _STATE_FINISHING
+                delta = @start - @index
+                console.log "Delta", delta, "Start", @start
+                if delta > 0
+                    # Read up to start
+                    buffer = @stream.read delta
+                    if buffer is null
+                        return
+                else if delta < 0
+                    # We read too much, so put some data back on the stream.
+                    buffer = buffer.slice delta
+                    console.log "Unshift", buffer
+                    @stream.unshift buffer
+                @state = _STATE_DONE
+
+            if @state is _STATE_DONE
+                @stream.removeListener 'readable', doParse
+                callback @
+
+        @stream.on 'readable', doParse
 
     parseDate: (buffer) =>
         console.log @convertBinaryToInteger buffer.slice 0, 1
