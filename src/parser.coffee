@@ -1,6 +1,7 @@
 {EventEmitter} = require 'events'
 Header = require './header'
 fs = require 'fs'
+stream = require 'stream'
 
 class Parser extends EventEmitter
 
@@ -9,64 +10,40 @@ class Parser extends EventEmitter
     parse: =>
         @emit 'start', @
 
-        @header = new Header @filename
-        @header.parse (err) =>
+        if @filename instanceof stream.Stream
+            stream = @filename
+        else
+            stream = fs.createReadStream @filename
 
+        stream.once 'end', () =>
+            @emit 'end'
+
+        @header = new Header stream
+        @header.parse (err) =>
             @emit 'header', @header
 
             sequenceNumber = 0
             
-            loc = @header.start
-            bufLoc = @header.start
-            overflow = null
-            @paused = false
-            
-            stream = fs.createReadStream @filename
-            
             @readBuf = =>
-            
                 if @paused
-                
+
                     @emit 'paused'
                     
                     return
-                
-                while buffer = stream.read()
-                    
-                    if bufLoc isnt @header.start then bufLoc = 0
-                    
-                    if overflow isnt null then buffer = overflow + buffer
-                    
-                    while loc < (@header.start + @header.numberOfRecords * @header.recordLength) && (bufLoc + @header.recordLength) <= buffer.length
-                        
-                        @emit 'record', @parseRecord ++sequenceNumber, buffer.slice bufLoc, bufLoc += @header.recordLength
-                        
-                    loc += bufLoc
-                    
-                    if bufLoc < buffer.length then overflow = buffer.slice bufLoc, buffer.length else overflow = null
-                    
-                    return @
-                    
+                while !@done and (buffer = stream.read @header.recordLength)
+                    if buffer[0] == 0x1A
+                        @done = true
+                    else if buffer.length == @header.recordLength
+                        @emit 'record', @parseRecord ++sequenceNumber, buffer
+
             stream.on 'readable',@readBuf
-            
-            stream.on 'end', () =>
-            
-                @emit 'end'
+
+            do @readBuf
+
+            return @
 
         return @
         
-    pause: =>
-        
-        @paused = true
-        
-    resume: =>
-    
-        @paused = false
-        
-        @emit 'resuming'
-        
-        do @readBuf
-
     parseRecord: (sequenceNumber, buffer) =>
         record = {
             '@sequenceNumber': sequenceNumber
@@ -86,5 +63,17 @@ class Parser extends EventEmitter
         if field.type is 'N' then value = parseInt value, 10
 
         return value
+
+     pause: =>
+        
+        @paused = true
+        
+    resume: =>
+    
+        @paused = false
+
+        @emit 'resuming'
+        
+        do @readBuf
 
 module.exports = Parser
