@@ -1,6 +1,6 @@
 {
   "name": "node-dbf",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "An efficient dBase DBF file parser written in pure JavaScript",
   "main": "./lib/parser.js",
   "repository": {
@@ -11,15 +11,20 @@
     "dBase",
     "dbf"
   ],
-  "author": "Matt Knight <matt@abstractvector.co.uk>",
+  "author": "Matt Knight <abstractvector@users.noreply.github.com>",
   "license": "MIT",
   "devDependencies": {
-    "coffee-script": ">=1.3.3"
+    "chai": "*",
+    "coffee-script": "*",
+    "mocha": "*"
   },
   "dependencies": {
     "iconv-lite": ">=0.2.11"
   },
   "scripts": {
-    "prepublish": "cake build"
+    "build": "cake build",
+    "prepublish": "npm run build",
+    "test": "npm run build && mocha",
+    "mocha": "mocha"
   }
 }
