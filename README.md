@@ -118,11 +118,11 @@ The following code example illustrates a very simple usage for this module:
 * Add support for field types other than Character and Numeric
 * Use `fs.readStream` instead of `fs.readFile` for increased performance
 
-[travis-image]:
-https://travis-ci.org/abstractvector/node-dbf.svg?branch=master
+[travis-image]:https://travis-ci.org/abstractvector/node-dbf.svg?branch=master
 [travis-url]: https://travis-ci.org/abstractvector/node-dbf
 [node-image]: https://img.shields.io/node/v/node-dbf.svg
 [node-url]: https://npmjs.org/package/node-dbf
 [npm-image]: https://img.shields.io/npm/v/node-dbf.svg
 [npm-url]: https://npmjs.org/package/node-dbf
 [downloads-image]: https://img.shields.io/npm/dt/node-dbf.svg
+[downloads-url]: https://npmjs.org/package/node-dbf
