@@ -1,13 +1,14 @@
 node-dbf
 ========
 
-This is an event-based dBase file parser for very efficiently reading data from *.dbf files.
+This is an event-based dBase file parser for very efficiently reading data from `*.dbf` files.
 
   [![Build Status][travis-image]][travis-url]
   [![Node Version][node-image]][node-url]
   [![NPM Version][npm-image]][npm-url]
   [![NPM Downloads][downloads-image]][downloads-url]
 
+The codebase is written in CoffeeScript but compiled in the npm module so CoffeeScript is not a dependency in production.
 
 To get started, simply install the module using npm:
 
@@ -86,7 +87,7 @@ This object may look like:
 
 This event is fired once the dBase parsing is complete and there are no more records remaining.
 
-##Usage
+#Usage
 
 The following code example illustrates a very simple usage for this module:
 
@@ -112,11 +113,16 @@ The following code example illustrates a very simple usage for this module:
     
     parser.parse();
 
+#Tests
+Tests are written in Mocha using Chai BDD for the expectations. Data on San Francisco zip codes was used as a reference test file - downloaded from [SF OpenData](https://data.sfgov.org/) and included in the `./test/fixtures/bayarea_zipcodes.dbf` file within the repository.
+
 #TODO
 
-* Write some tests
+* Add more tests
 * Add support for field types other than Character and Numeric
 * Use `fs.readStream` instead of `fs.readFile` for increased performance
+* Add a CLI interface for converting to CSV, etc
+* Improve error handling to emit an error event
 
 [travis-image]:https://travis-ci.org/abstractvector/node-dbf.svg?branch=master
 [travis-url]: https://travis-ci.org/abstractvector/node-dbf

@@ -20,7 +20,6 @@ class Header
             callback @
 
     parseDate: (buffer) =>
-        console.log @convertBinaryToInteger buffer.slice 0, 1
         year = 1900 + @convertBinaryToInteger buffer.slice 0, 1
         month = (@convertBinaryToInteger buffer.slice 1, 2) - 1
         day = @convertBinaryToInteger buffer.slice 2, 3
