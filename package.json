@@ -1,6 +1,6 @@
 {
   "name": "node-dbf",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "engines": {
     "node": ">=0.10.0"
   },
@@ -21,9 +21,7 @@
     "coffee-script": "*",
     "mocha": "*"
   },
-  "dependencies": {
-    "iconv-lite": ">=0.2.11"
-  },
+  "dependencies": {},
   "scripts": {
     "build": "cake build",
     "prepublish": "npm run build",

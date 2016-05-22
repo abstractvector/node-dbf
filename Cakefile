@@ -1,6 +1,6 @@
 fs = require 'fs'
 
-{print} = require 'sys'
+{inspect} = require 'util'
 {exec} = require 'child_process'
 
 build = (callback) ->
