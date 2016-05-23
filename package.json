@@ -2,7 +2,7 @@
   "name": "node-dbf",
   "version": "0.2.0",
   "engines": {
-    "node": ">=0.10.0"
+    "node": ">=0.11.0"
   },
   "description": "An efficient dBase DBF file parser written in pure JavaScript",
   "main": "./lib/parser.js",
