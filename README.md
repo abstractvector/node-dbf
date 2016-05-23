@@ -87,7 +87,7 @@ This object may look like:
 
 This event is fired once the dBase parsing is complete and there are no more records remaining.
 
-#Usage
+##Usage
 
 The following code example illustrates a very simple usage for this module:
 
@@ -113,7 +113,22 @@ The following code example illustrates a very simple usage for this module:
     
     parser.parse();
 
+#Command-Line Interface (CLI)
+
+The parser also supports a command-line interface (CLI) for converting DBF files to CSV. You can invoke it as follows:
+
+    $ node-dbf convert /path/to/file.dbf
+
+This will write the converted rows to `stdout` and metadata about the process (e.g. number of rows, etc) to `stderr`. This allows you to write stdout directly to an output file, for example:
+
+    $ node-dbf convert file.dbf > file.csv
+
+For more help information on using the command line options, use the integrated help:
+
+    $ node-dbf help
+
 #Tests
+
 Tests are written in Mocha using Chai BDD for the expectations. Data on San Francisco zip codes was used as a reference test file - downloaded from [SF OpenData](https://data.sfgov.org/) and included in the `./test/fixtures/bayarea_zipcodes.dbf` file within the repository.
 
 #TODO

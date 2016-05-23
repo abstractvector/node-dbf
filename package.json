@@ -6,6 +6,7 @@
   },
   "description": "An efficient dBase DBF file parser written in pure JavaScript",
   "main": "./lib/parser.js",
+  "bin": "./bin/node-dbf.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/abstractvector/node-dbf.git"
@@ -21,11 +22,12 @@
     "coffee-script": "*",
     "mocha": "*"
   },
-  "dependencies": {},
+  "dependencies": {
+    "commander": "^2.9.0"
+  },
   "scripts": {
     "build": "cake build",
     "prepublish": "npm run build",
-    "test": "npm run build && mocha",
-    "mocha": "mocha"
+    "test": "npm run build && mocha"
   }
 }
