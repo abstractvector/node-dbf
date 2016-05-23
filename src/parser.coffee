@@ -4,12 +4,13 @@ fs = require 'fs'
 
 class Parser extends EventEmitter
 
-    constructor: (@filename) ->
+    constructor: (@filename, @options = {}) ->
+        @encoding = @options?.encoding || 'utf-8'
 
     parse: =>
         @emit 'start', @
 
-        @header = new Header @filename
+        @header = new Header @filename, @encoding
         @header.parse (err) =>
 
             @emit 'header', @header
@@ -69,7 +70,7 @@ class Parser extends EventEmitter
         return record
 
     parseField: (field, buffer) =>
-        value = (buffer.toString 'utf-8').replace /^\x20+|\x20+$/g, ''
+        value = (buffer.toString @encoding).trim()
 
         if field.type is 'N'
             value = parseInt value, 10

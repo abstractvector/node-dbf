@@ -2,14 +2,14 @@ fs = require 'fs'
 
 class Header
 
-    constructor: (@filename) ->
+    constructor: (@filename, @encoding = 'utf-8') ->
         return @
 
     parse: (callback) ->
         fs.readFile @filename, (err, buffer) =>
             throw err if err
 
-            @type = (buffer.slice 0, 1).toString 'utf-8'
+            @type = (buffer.slice 0, 1).toString @encoding
             @dateUpdated = @parseDate (buffer.slice 1, 4)
             @numberOfRecords = @convertBinaryToInteger (buffer.slice 4, 8)
             @start = @convertBinaryToInteger (buffer.slice 8, 10)
@@ -28,8 +28,8 @@ class Header
 
     parseFieldSubRecord: (buffer) =>
         header = {
-            name: ((buffer.slice 0, 11).toString 'utf-8').replace /[\u0000]+$/, ''
-            type: (buffer.slice 11, 12).toString 'utf-8'
+            name: ((buffer.slice 0, 11).toString @encoding).replace /[\u0000]+$/, ''
+            type: (buffer.slice 11, 12).toString @encoding
             displacement: @convertBinaryToInteger buffer.slice 12, 16
             length: @convertBinaryToInteger buffer.slice 16, 17
             decimalPlaces: @convertBinaryToInteger buffer.slice 17, 18

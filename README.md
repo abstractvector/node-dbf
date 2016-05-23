@@ -26,9 +26,14 @@ There are two classes - the `Parser` and the `Header`. The `Parser` is the most 
 
 This class is the main interface for reading data from dBase files. It extends `EventEmitter` and its output is via events.
 
-###new Parser(path)
+###new Parser(path, options)
 
-* path `String` The full path to the .dbf file to parse
+* path `String` The full path to the DBF file to parse
+* options `Object` An object containing options for the parser.
+
+The support options are:
+
+* encoding `String` The character encoding to use (default = `utf-8`)
 
 Creates a new Parser and attaches it to the specified filename.
 
