@@ -118,6 +118,23 @@ The following code example illustrates a very simple usage for this module:
     });
     
     parser.parse();
+    
+How to use encodings not supported by nodejs Buffer:
+
+    var Parser = require('node-dbf');
+    var iconv = require('iconv-lite');     //npm install iconv-lite
+    
+    encodingFunction = function (buffer, encoding) {
+      return iconv.decode(buffer, 'CP866').trim(); //CP1252....
+    };
+
+    var parser = new Parser('/path/to/my/dbase/file.dbf', {encoder:encodingFunction});
+    
+    parser.on('record', function(record) {
+        console.log('Name: ' + record.firstName + ' ' + record.lastName); // Name: Jü Smith
+    });
+    
+    parser.parse();
 
 #Command-Line Interface (CLI)
 
