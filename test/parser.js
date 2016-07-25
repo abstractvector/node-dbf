@@ -210,7 +210,72 @@ describe('Parser', function() {
         expect(events.end).to.be.above(events.record);
       });
     });
- 
+    
+  describe('Parsing the SF zip codes with small chunksize and own encoder', function() {
+    var encoder_func_called = false;
+    var own_encoder = function (buffer, encoding) { encoder_func_called = true; return (buffer.toString(encoding)).trim();};
+      
+    var parser = new Parser(__dirname + '/fixtures/bayarea_zipcodes.dbf', { encoder: own_encoder, readStreamOptions:{ highWaterMark:50}}); //read by 50 bytes chunk (below header size and below recordsize)
+    var header, records = [], events, header;
+    
+
+    before(function(done) {
+      events = {start: undefined, header: undefined, record: undefined, end: undefined};
+
+      parser.on('start', function() {
+        events.start = process.hrtime()[1];
+      });
+
+      parser.on('header', function(h) {
+        header = h;
+        events.header = process.hrtime()[1];
+      });
+
+      parser.on('record', function(record) {
+        records.push(record);
+        events.record = process.hrtime()[1];
+      });
+
+      parser.on('end', function() {
+        events.end = process.hrtime()[1];
+        done();
+      });
+
+      parser.parse();
+    });
+
+    describe('the records', function() {
+      it('there are 187', function() {
+        expect(records).to.have.lengthOf(187);
+      });
+
+      it('the header says there are 187', function() {
+        expect(header.numberOfRecords).to.equal(187);
+      });
+
+      it('contain the 94111 zip code', function() {
+        var area = records.filter(function(v) { return '94111' === v.ZIP; });
+
+        expect(area).to.be.an('Array');
+        expect(area).to.have.lengthOf(1);
+        area = area[0];
+
+        expect(area['@sequenceNumber']).to.be.a('Number');
+        expect(area['@deleted']).to.equal(false);
+
+        expect(area.ZIP).to.equal('94111');
+        expect(area.PO_NAME).to.equal('SAN FRANCISCO');
+        expect(area.STATE).to.equal('CA');
+        expect(area.Area__).to.be.a('Number').within(0, Number.MAX_VALUE);
+        expect(area.Length__).to.be.a('Number').within(0, Number.MAX_VALUE);
+      });
+      
+      it ('call encoder func', function () {
+        expect(encoder_func_called).to.be.true;
+      });
+    });
+  })
+    
     // check a select number of them
     // check floats
     // check character encoding ???

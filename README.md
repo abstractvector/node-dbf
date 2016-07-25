@@ -34,6 +34,7 @@ This class is the main interface for reading data from dBase files. It extends `
 The support options are:
 
 * encoding `String` The character encoding to use (default = `utf-8`)
+* encoder `Function` The encoder for field value. (default `buffer.toString(encoding)` used)
 
 Creates a new Parser and attaches it to the specified filename.
 
