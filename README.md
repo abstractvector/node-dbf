@@ -34,6 +34,7 @@ This class is the main interface for reading data from dBase files. It extends `
 The support options are:
 
 * encoding `String` The character encoding to use (default = `utf-8`)
+* encoder `Function` The encoder for field value. (default `buffer.toString(encoding)` used)
 
 Creates a new Parser and attaches it to the specified filename.
 
@@ -114,6 +115,23 @@ The following code example illustrates a very simple usage for this module:
     
     parser.on('end', function(p) {
         console.log('Finished parsing the dBase file');
+    });
+    
+    parser.parse();
+    
+How to use encodings not supported by nodejs Buffer:
+
+    var Parser = require('node-dbf');
+    var iconv = require('iconv-lite');     //npm install iconv-lite
+    
+    encodingFunction = function (buffer, encoding) {
+      return iconv.decode(buffer, 'CP866').trim(); //CP1252....
+    };
+
+    var parser = new Parser('/path/to/my/dbase/file.dbf', {encoder:encodingFunction});
+    
+    parser.on('record', function(record) {
+        console.log('Name: ' + record.firstName + ' ' + record.lastName); // Name: Jü Smith
     });
     
     parser.parse();

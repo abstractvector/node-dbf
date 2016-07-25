@@ -6,6 +6,8 @@ class Parser extends EventEmitter
 
     constructor: (@filename, @options = {}) ->
         @encoding = @options?.encoding || 'utf-8'
+        @encoder = @options?.encoder || @getValueString
+        @readStreamOptions = @options?.readStreamOptions
 
     parse: =>
         @emit 'start', @
@@ -16,13 +18,12 @@ class Parser extends EventEmitter
             @emit 'header', @header
 
             sequenceNumber = 0
-            
-            loc = @header.start
+            loc = 0
             bufLoc = @header.start
             overflow = null
             @paused = false
             
-            stream = fs.createReadStream @filename
+            stream = fs.createReadStream @filename, @readStreamOptions
             
             @readBuf = =>
             
@@ -31,18 +32,24 @@ class Parser extends EventEmitter
                     return
                 
                 while buffer = stream.read()
-                    if bufLoc isnt @header.start then bufLoc = 0
-                    if overflow isnt null then buffer = overflow + buffer
-
+                    if overflow isnt null then buffer = Buffer.concat [overflow, buffer]
+                    
                     while loc < (@header.start + @header.numberOfRecords * @header.recordLength) && (bufLoc + @header.recordLength) <= buffer.length
                         @emit 'record', @parseRecord ++sequenceNumber, buffer.slice bufLoc, bufLoc += @header.recordLength
-
-                    loc += bufLoc
-                    if bufLoc < buffer.length then overflow = buffer.slice bufLoc, buffer.length else overflow = null
+                    
+                    if bufLoc < buffer.length
+                      overflow = buffer.slice bufLoc, buffer.length 
+                      loc += bufLoc
+                      bufLoc = 0
+                    else 
+                      overflow = null
+                      bufLoc -=  buffer.length
+                      loc += buffer.length
+                    
 
                     return @
                     
-            stream.on 'readable',@readBuf            
+            stream.on 'readable',@readBuf
             stream.on 'end', () =>
                 @emit 'end'
 
@@ -68,9 +75,12 @@ class Parser extends EventEmitter
                 record[field.name] = @parseField field, buffer.slice loc, loc += field.length
 
         return record
+        
+    getValueString: (buffer, encoding) =>
+         return (buffer.toString encoding).trim()
 
     parseField: (field, buffer) =>
-        value = (buffer.toString @encoding).trim()
+        value = @encoder buffer, @encoding
 
         if field.type is 'N'
             value = parseInt value, 10
