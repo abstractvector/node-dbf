@@ -23,7 +23,7 @@ var wrap = function(t) {
   return [quote, t, quote].join('');
 };
 
-var Parser = require('../lib/parser.js');
+var Parser = require('../lib/parser').default;
 var fields;
 
 var timeStart = process.hrtime();

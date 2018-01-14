@@ -1,8 +1,7 @@
-var chai = require('chai');
-var expect = chai.expect;
+import { EventEmitter } from 'events';
+import { expect } from 'chai';
 
-var Parser = require('../lib/parser.js');
-var EventEmitter = require('events');
+import Parser from '../lib/parser';
 
 describe('Parser', function() {
 
@@ -23,28 +22,28 @@ describe('Parser', function() {
 
   describe('Object instantiation', function () {
     it('accepts a filename to parse', function() {
-      var parser = new Parser('/path/to/a/dbf/file');
+      let parser = new Parser('/path/to/a/dbf/file');
 
       expect(parser).to.be.an.instanceof(Parser);
       expect(parser.filename).to.equal('/path/to/a/dbf/file');
     });
 
     it('does not check if filename exists', function() {
-      var parser = new Parser('/path/to/a/file/that/does/not/exist');
+      let parser = new Parser('/path/to/a/file/that/does/not/exist');
 
       expect(parser).to.be.an.instanceof(Parser);
       expect(parser.filename).to.equal('/path/to/a/file/that/does/not/exist');
     });
 
     it('does not require a filename', function() {
-      var parser = new Parser();
+      let parser = new Parser();
 
       expect(parser).to.be.an.instanceof(Parser);
       expect(parser.filename).to.equal(undefined);
     });
 
     it('allows the filename to be modified after instantiation', function() {
-      var parser = new Parser('/path/to/file/1');
+      let parser = new Parser('/path/to/file/1');
 
       expect(parser).to.be.an.instanceof(Parser);
       expect(parser.filename).to.equal('/path/to/file/1');
@@ -55,7 +54,7 @@ describe('Parser', function() {
   });
 
   describe('The methods', function() {
-    var parser = new Parser('/path/to/a/dbf/file');
+    let parser = new Parser('/path/to/a/dbf/file');
 
     it('has a parse() method', function() {
       expect(parser).to.respondTo('parse');
@@ -75,8 +74,8 @@ describe('Parser', function() {
   });
 
   describe('Parsing the SF zip codes', function() {
-    var parser = new Parser(__dirname + '/fixtures/bayarea_zipcodes.dbf');
-    var header, records = [], events, header;
+    let parser = new Parser(__dirname + '/fixtures/bayarea_zipcodes.dbf');
+    let header, records = [], events;
 
     before(function(done) {
       events = {start: undefined, header: undefined, record: undefined, end: undefined};
@@ -164,7 +163,7 @@ describe('Parser', function() {
       });
 
       it('contain the 94111 zip code', function() {
-        var area = records.filter(function(v) { return '94111' === v.ZIP; });
+        let area = records.filter(function(v) { return '94111' === v.ZIP; });
 
         expect(area).to.be.an('Array');
         expect(area).to.have.lengthOf(1);

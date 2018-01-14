@@ -1,8 +1,8 @@
 {
   "name": "node-dbf",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "engines": {
-    "node": ">=0.11.0"
+    "node": ">=7"
   },
   "description": "An efficient dBase DBF file parser written in pure JavaScript",
   "main": "./lib/parser.js",
@@ -18,16 +18,26 @@
   "author": "Matt Knight <abstractvector@users.noreply.github.com>",
   "license": "MIT",
   "devDependencies": {
-    "chai": "*",
-    "coffee-script": "*",
-    "mocha": "*"
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "chai": "^4.1.2",
+    "mocha": "^4.1.0",
+    "rimraf": "^2.6.2"
   },
   "dependencies": {
     "commander": "^2.9.0"
   },
   "scripts": {
-    "build": "cake build",
-    "prepublish": "npm run build",
-    "test": "npm run build && mocha"
+    "clean": "rimraf lib && mkdir lib",
+    "build-server": "babel -d ./lib ./src",
+    "build": "npm run clean && npm run build-server",
+    "prepare": "npm run build && npm test",
+    "test": "mocha --require babel-core/register --recursive"
+  },
+  "babel": {
+    "presets": [
+      "es2015"
+    ]
   }
 }
