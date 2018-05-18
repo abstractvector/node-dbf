@@ -17,65 +17,43 @@ export default class Parser extends EventEmitter {
         this.emit('start', this);
 
         this.header = new Header(this.filename, this.encoding);
-
-        let { start, numberOfRecords, recordLength } = this.header;
-
-        let deletedValues = [32, 42, '*', ' '];
-
         this.header.parse(err => {
 
             this.emit('header', this.header);
 
             let sequenceNumber = 0;
-
-            let loc = start;
-            let bufLoc = start;
+            
+            let loc = this.header.start;
+            let bufLoc = this.header.start;
             let overflow = null;
             this.paused = false;
-
+            
             const stream = fs.createReadStream(this.filename);
-
+            
             this.readBuf = () => {
-
+            
                 let buffer;
                 if (this.paused) {
                     this.emit('paused');
                     return;
                 }
+                
+                while ((buffer = stream.read())) {
+                    if (bufLoc !== this.header.start) { bufLoc = 0; }
+                    if (overflow !== null) { buffer = overflow + buffer; }
 
-                while ( ( buffer = stream.read() ) ) {
-                    if (bufLoc !== this.header.start) bufLoc = 0;
-                    if (overflow !== null) buffer = overflow + buffer;
-
-                    while (
-                            ( loc < ( start + (numberOfRecords * recordLength) )
-                        ) && (
-                            (bufLoc + recordLength) <= buffer.length)
-                        ) {
-                            this.emit(
-                                'record',
-                                this.parseRecord(
-                                    ++sequenceNumber,
-                                    buffer.slice(
-                                        bufLoc,
-                                        (bufLoc += recordLength)
-                                    )
-                                )
-                            );
+                    while ((loc < (this.header.start + (this.header.numberOfRecords * this.header.recordLength))) && ((bufLoc + this.header.recordLength) <= buffer.length)) {
+                        this.emit('record', this.parseRecord(++sequenceNumber, buffer.slice(bufLoc, (bufLoc += this.header.recordLength))));
                     }
 
                     loc += bufLoc;
-                    if (bufLoc < buffer.length) {
-                        overflow = buffer.slice(bufLoc, buffer.length);
-                    } else {
-                        overflow = null;
-                    }
+                    if (bufLoc < buffer.length) { overflow = buffer.slice(bufLoc, buffer.length); } else { overflow = null; }
 
                     return this;
                 }
             };
-
-            stream.on('readable', this.readBuf);
+                    
+            stream.on('readable',this.readBuf);            
             return stream.on('end', () => {
                 return this.emit('end');
             });
@@ -83,30 +61,27 @@ export default class Parser extends EventEmitter {
 
         return this;
     }
-
-    pause() {
+        
+    pause() {        
         return this.paused = true;
     }
-
-    resume() {
-        this.paused = false;
-        this.emit('resuming');
+        
+    resume() {    
+        this.paused = false;        
+        this.emit('resuming');        
         return (this.readBuf)();
     }
 
     parseRecord(sequenceNumber, buffer) {
         const record = {
             '@sequenceNumber': sequenceNumber,
-            '@deleted': deletedValues.includes( (buffer.slice(0, 1))[0] )
+            '@deleted': (buffer.slice(0, 1))[0] !== 32
         };
 
         let loc = 1;
-        for ( let field of Array.from(this.header.fields) ) {
+        for (let field of Array.from(this.header.fields)) {
             (field => {
-                return record[field.name] = this.parseField(
-                    field,
-                    buffer.slice( loc, (loc += field.length) )
-                );
+                return record[field.name] = this.parseField(field, buffer.slice(loc, (loc += field.length)));
             })(field);
         }
 
@@ -119,9 +94,7 @@ export default class Parser extends EventEmitter {
         if (field.type === 'N') {
             value = parseInt(value, 10);
         } else if (field.type === 'F') {
-            value = (value === + value) && ( value === (value | 0) )
-                ? parseInt(value, 10)
-                : parseFloat(value, 10);
+            value = (value === +value) && (value === (value | 0)) ? parseInt(value, 10) : parseFloat(value, 10);
         }
 
         return value;
