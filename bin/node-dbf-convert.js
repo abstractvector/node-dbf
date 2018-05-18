@@ -13,7 +13,7 @@ program
   .option('-f, --format <format>', 'Output format (default = csv)', /^(csv)$/i, 'csv')
   .option('-d, --delimiter <delimiter>', 'Field delimiter (default = ,)', ',')
   .option('-q, --quote <quote>', 'Field value wrapper quote (default = ")', '"')
-  .action(function(f) { file = path.join(__dirname, '../', f); })
+  .action(function(f) { file = path.resolve(process.cwd(), f); })
   .parse(process.argv);
 
 var delimiter = program.delimiter || ',';
