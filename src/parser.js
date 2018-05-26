@@ -75,7 +75,7 @@ export default class Parser extends EventEmitter {
     parseRecord(sequenceNumber, buffer) {
         const record = {
             '@sequenceNumber': sequenceNumber,
-            '@deleted': [32,42,'*',' '].includes((buffer.slice(0, 1))[0])
+            '@deleted': [42,'*'].includes((buffer.slice(0, 1))[0])
         };
 
         let loc = 1;

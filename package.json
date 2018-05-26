@@ -1,6 +1,6 @@
 {
   "name": "node-dbf",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "engines": {
     "node": ">=7"
   },
