@@ -91,10 +91,25 @@ export default class Parser extends EventEmitter {
     parseField(field, buffer) {
         let value = (buffer.toString(this.encoding)).trim();
 
-        if (field.type === 'N') {
-            value = parseInt(value, 10);
-        } else if (field.type === 'F') {
+        if (field.type === 'C') { // Character
+            value = value;
+        } else if (field.type === 'F') { // Floating Point
             value = (value === +value) && (value === (value | 0)) ? parseInt(value, 10) : parseFloat(value, 10);
+        } else if (field.type == 'L') { // Logical
+            switch (value) {
+                case (['Y', 'y', 'T', 't'].includes(value)):
+                    value = true;
+                    break;
+                case (['N', 'n', 'F', 'f'].includes(value)):
+                    value = false;
+                    break;
+                default:
+                    value = null;
+            }
+        } else if (field.type === 'M') { // Memo
+            value = value;
+        } else if (field.type === 'N') { // Numeric
+            value = value === +value && value === (value|0) ? parseInt(value) : parseFloat(value, 10);
         }
 
         return value;
