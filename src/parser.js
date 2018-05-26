@@ -22,22 +22,22 @@ export default class Parser extends EventEmitter {
             this.emit('header', this.header);
 
             let sequenceNumber = 0;
-            
+
             let loc = this.header.start;
             let bufLoc = this.header.start;
             let overflow = null;
             this.paused = false;
-            
+
             const stream = fs.createReadStream(this.filename);
-            
+
             this.readBuf = () => {
-            
+
                 let buffer;
                 if (this.paused) {
                     this.emit('paused');
                     return;
                 }
-                
+
                 while ((buffer = stream.read())) {
                     if (bufLoc !== this.header.start) { bufLoc = 0; }
                     if (overflow !== null) { buffer = overflow + buffer; }
@@ -52,8 +52,8 @@ export default class Parser extends EventEmitter {
                     return this;
                 }
             };
-                    
-            stream.on('readable',this.readBuf);            
+
+            stream.on('readable',this.readBuf);
             return stream.on('end', () => {
                 return this.emit('end');
             });
@@ -61,21 +61,21 @@ export default class Parser extends EventEmitter {
 
         return this;
     }
-        
-    pause() {        
+
+    pause() {
         return this.paused = true;
     }
-        
-    resume() {    
-        this.paused = false;        
-        this.emit('resuming');        
+
+    resume() {
+        this.paused = false;
+        this.emit('resuming');
         return (this.readBuf)();
     }
 
     parseRecord(sequenceNumber, buffer) {
         const record = {
             '@sequenceNumber': sequenceNumber,
-            '@deleted': (buffer.slice(0, 1))[0] !== 32
+            '@deleted': [32,42,'*',' '].includes((buffer.slice(0, 1))[0])
         };
 
         let loc = 1;
