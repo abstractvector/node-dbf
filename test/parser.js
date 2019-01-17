@@ -65,7 +65,7 @@ describe('Parser', function() {
     });
 
     it('has a pause() method', function() {
-      expect(parser).to.respondTo('resume');
+      expect(parser).to.respondTo('pause');
     });
 
     it('has a resume() method', function() {
