@@ -96,14 +96,13 @@ export default class Parser extends EventEmitter {
         } else if (field.type === 'F') { // Floating Point
             value = (value === +value) && (value === (value | 0)) ? parseInt(value, 10) : parseFloat(value, 10);
         } else if (field.type == 'L') { // Logical
-            switch (value) {
-                case (['Y', 'y', 'T', 't'].includes(value)):
+            if (['Y', 'y', 'T', 't'].includes(value)) {
                     value = true;
-                    break;
-                case (['N', 'n', 'F', 'f'].includes(value)):
+            }
+            else if (['N', 'n', 'F', 'f'].includes(value)) {
                     value = false;
-                    break;
-                default:
+            }
+            else {
                     value = null;
             }
         } else if (field.type === 'M') { // Memo
