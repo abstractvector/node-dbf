@@ -26,7 +26,8 @@
     "rimraf": "^2.6.2"
   },
   "dependencies": {
-    "commander": "^2.9.0"
+    "commander": "^2.9.0",
+    "iconv-lite": "^0.6.2"
   },
   "scripts": {
     "clean": "rimraf lib && mkdir lib",

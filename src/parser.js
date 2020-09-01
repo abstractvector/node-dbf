@@ -1,5 +1,6 @@
 import fs from 'fs';
 import { EventEmitter } from 'events';
+import * as iconv from 'iconv-lite';
 
 import Header from './header';
 
@@ -89,7 +90,7 @@ export default class Parser extends EventEmitter {
     }
 
     parseField(field, buffer) {
-        let value = (buffer.toString(this.encoding)).trim();
+        let value = iconv.decode(buffer, this.encoding).trim();
 
         if (field.type === 'C') { // Character
             value = value;
