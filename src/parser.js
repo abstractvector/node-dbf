@@ -41,7 +41,7 @@ export default class Parser extends EventEmitter {
 
                 while ((buffer = stream.read())) {
                     if (bufLoc !== this.header.start) { bufLoc = 0; }
-                    if (overflow !== null) { buffer = overflow + buffer; }
+                    if (overflow !== null) { buffer = Buffer.concat([overflow, buffer]); }
 
                     while ((loc < (this.header.start + (this.header.numberOfRecords * this.header.recordLength))) && ((bufLoc + this.header.recordLength) <= buffer.length)) {
                         this.emit('record', this.parseRecord(++sequenceNumber, buffer.slice(bufLoc, (bufLoc += this.header.recordLength))));
