@@ -1,3 +1,9 @@
+> **IMPORTANT NOTICE**
+>
+> This library is no longer being actively maintained.
+>
+> If you're interested in taking ownership, please leave a comment on: https://github.com/abstractvector/node-dbf/issues/46
+
 DBF Parser
 ==========
 
