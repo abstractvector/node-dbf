@@ -1,5 +1,6 @@
 import fs from 'fs';
 import { EventEmitter } from 'events';
+import * as iconv from 'iconv-lite';
 
 import Header from './header';
 
@@ -40,7 +41,7 @@ export default class Parser extends EventEmitter {
 
                 while ((buffer = stream.read())) {
                     if (bufLoc !== this.header.start) { bufLoc = 0; }
-                    if (overflow !== null) { buffer = overflow + buffer; }
+                    if (overflow !== null) { buffer = Buffer.concat([overflow, buffer]); }
 
                     while ((loc < (this.header.start + (this.header.numberOfRecords * this.header.recordLength))) && ((bufLoc + this.header.recordLength) <= buffer.length)) {
                         this.emit('record', this.parseRecord(++sequenceNumber, buffer.slice(bufLoc, (bufLoc += this.header.recordLength))));
@@ -89,7 +90,7 @@ export default class Parser extends EventEmitter {
     }
 
     parseField(field, buffer) {
-        let value = (buffer.toString(this.encoding)).trim();
+        let value = iconv.decode(buffer, this.encoding).trim();
 
         if (field.type === 'C') { // Character
             value = value;
